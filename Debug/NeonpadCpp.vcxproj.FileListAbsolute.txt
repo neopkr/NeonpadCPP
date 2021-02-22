@@ -1,0 +1,2 @@
+C:\Users\neopk\source\repos\NeonpadCpp\Debug\NeonpadCpp.exe
+C:\Users\neopk\source\repos\NeonpadCpp\Debug\NeonpadCpp.pdb
