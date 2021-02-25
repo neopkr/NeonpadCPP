@@ -20,6 +20,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 void textBox(HWND);
 int g_scrollY = 0;
 HWND hEdit;
+HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+HWND hFontSize;
 
 int CALLBACK WinMain(
 	_In_	 HINSTANCE hInstance,
@@ -66,27 +68,6 @@ int CALLBACK WinMain(
 		NULL
 	);
 
-	// WS_OVERLAPPED | WS_CAUTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX
-
-	/*
-	HWND hWndButton = CreateWindow(
-		L"BUTTON",
-		L"OK",
-		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		10,
-		10,
-		100,
-		100,
-		hWnd,
-		NULL,
-		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-		NULL
-	);
-	
-	SendMessage(hWndButton, WM_SETTEXT, 0, (LPARAM)L"Command Link");
-	SendMessage(hWndButton, BCM_SETNOTE, 0, (LPARAM)L"with note");
-	*/
-
 	HWND dhWnd = CreateWindow(
 		"",
 		"",
@@ -108,7 +89,8 @@ int CALLBACK WinMain(
 
 		return 1;
 	}
-	
+
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 	
@@ -144,17 +126,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HMENU edit = CreateMenu();
 		HMENU view = CreateMenu();
 		HMENU help = CreateMenu();
+		HMENU format = CreateMenu();
 		HMENU editSubMenu = CreatePopupMenu();
-		//
-		HMENU downbar = CreateMenu();
-		HMENU counter = CreateMenu();
-		
-		AppendMenu(downbar, MF_MENUBREAK, (UINT_PTR)counter, "counter");
-		AppendMenu(counter, MF_MENUBREAK, NULL, "Whatever");
-		SetMenu(hWnd, downbar);
+		HMENU fontSize = CreatePopupMenu();
 		
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)file, fname);
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)edit, ename);
+		AppendMenu(menubar, MF_POPUP, (UINT_PTR)format, "Format");
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)view, vname);
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)help, hname);
 		// file
@@ -167,35 +145,56 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// view
 		AppendMenu(view, MF_STRING, NULL, nodata);
 		// edit
-		AppendMenu(edit, MF_STRING, EDIT_FONT, subFont);
-		//AppendMenu(editSubMenu, MF_STRING, NULL, L"Arial");
-		AppendMenu(edit, MF_STRING, EDIT_COPY, editCopy);
-		AppendMenu(edit, MF_STRING, EDIT_PASTE, "Paste");
+		AppendMenu(edit, MF_STRING, NULL, "Undo			Ctrl+Z");
+		SEPARATOR(edit);
 		AppendMenu(edit, MF_STRING, EDIT_CUT, editCut);
-		AppendMenu(edit, MF_STRING, EDIT_PRINT, editPrint);
+		AppendMenu(edit, MF_STRING, EDIT_COPY, editCopy);
+		AppendMenu(edit, MF_STRING, EDIT_PASTE, "Paste		Ctrl+V");
+		AppendMenu(edit, MF_STRING, EDIT_DELETE, "Delete		Supr");
+		// format
+		AppendMenu(format, MF_STRING, FORMAT_WW, helpWW);
+		AppendMenu(format, MF_STRING | MF_POPUP, (UINT_PTR)editSubMenu, subFont);
+		AppendMenu(editSubMenu, MF_STRING, FONT_ARIAL, "Arial");
+		AppendMenu(editSubMenu, MF_STRING, FONT_CSMS, "Comic Sans MS");
+		AppendMenu(editSubMenu, MF_STRING, FONT_TNR, "Times New Roman");
+		AppendMenu(editSubMenu, MF_STRING, FONT_CONSOLAS, "Consolas");
+		SEPARATOR(editSubMenu);
+		AppendMenu(editSubMenu, MF_POPUP | MF_STRING, (UINT_PTR)fontSize, "Font Size");
+		AppendMenu(fontSize, MF_STRING, FONT_12, "12");
+		AppendMenu(fontSize, MF_STRING, FONT_16, "16");
+		AppendMenu(fontSize, MF_STRING, FONT_20, "20");
+		AppendMenu(fontSize, MF_STRING, FONT_24, "24");
+		AppendMenu(fontSize, MF_STRING, FONT_28, "28");
+		AppendMenu(fontSize, MF_STRING, FONT_32, "32");
+		AppendMenu(fontSize, MF_STRING, FONT_64, "64");
 		// help
-		AppendMenu(help, MF_STRING, HELP_MENU_WW, helpWW);
+		AppendMenu(help, MF_STRING, HELP_DOC, "Documentation");
+		AppendMenu(help, MF_STRING, HELP_GITHUB, "GitHub Repository");
+		SEPARATOR(help);
+		AppendMenu(help, MF_STRING, HELP_ABOUT, "About");
 		SetMenu(hWnd, menubar);
 		
 		// TextBox
-		hEdit = CreateWindow(ename, "", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_EX_LAYERED | WS_VSCROLL | WS_HSCROLL, 0, 1, 985, 540, hWnd, (HMENU)ID_TEXT, NULL, NULL);
-		CreateWindow(
-			"",
-			"",
-			WS_TABSTOP | WS_BORDER | WS_VISIBLE | WS_CHILD,
-			500, 500,
-			10, 10,
-			hEdit,
-			(HMENU)ID_TEXT,
-			NULL,
-			NULL
-		);
-		//setFont(hWnd, 12, "Tahoma");
+		hEdit = CreateWindow(ename, "", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_EX_LAYERED | WS_VSCROLL | WS_HSCROLL, 0, 1, 985, 540, hWnd, (HMENU)ID_TEXT, NULL, hFont);
 		break;
 	}	
 	case WM_COMMAND:
 		switch (wParam)
 		{
+		case FONT_ARIAL: changeFont(hEdit, arial); break;
+		case FONT_CSMS: changeFont(hEdit, csMS); break;
+		case FONT_TNR: changeFont(hEdit, TNR); break;
+		case FONT_CONSOLAS: changeFont(hEdit, Consolas); break;
+		// not working font size
+		case FONT_12: szFont = 12; break;
+		case FONT_16: szFont = 16; break;
+		case FONT_20: szFont = 20; break;
+		case FONT_24: szFont = 24; break;
+		case FONT_28: szFont = 28; break;
+		case FONT_32: szFont = 32; break;
+		case FONT_64: szFont = 64; break;
+		case HELP_GITHUB:
+			// TODO: HyperLink
 		case EDIT_COPY:
 		{
 			SetClipboardData(CF_TEXT, hWnd);
@@ -224,6 +223,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case ID_TEXT:
 		{
+
 			fileNewOption(hWnd);
 			break;
 		}
@@ -274,7 +274,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		}
-		case HELP_MENU_WW:
+		case FORMAT_WW:
 		{
 			auto action = LOWORD(wParam);
 			if (action == WS_HSCROLL || action == CBS_AUTOHSCROLL)
@@ -421,8 +421,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	*/
 	case WM_PAINT:
+		RECT rect;
 		hdc = BeginPaint(hWnd, &ps);
-		// TODO code here;
+		hFont = CreateFont(0, 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, TEXT("Arial"));
+		SelectObject(hdc, hFont);
+		SetRect(&rect, 100, 100, 700, 200);
+		SetTextColor(hdc, RGB(255, 0, 0));
+		DrawText(hdc, TEXT("dw arial"), -1, &rect, DT_NOCLIP);
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:
