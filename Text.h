@@ -32,13 +32,37 @@
 #define FONT_TNR 102
 #define FONT_CONSOLAS 103
 
-#define FONT_12 200
-#define FONT_16 201
-#define FONT_20 292
-#define FONT_24 203
-#define FONT_28 204
-#define FONT_32 205
-#define FONT_64 230
+#define FONT_12A 200
+#define FONT_16A 201
+#define FONT_20A 202
+#define FONT_24A 203
+#define FONT_28A 204
+#define FONT_32A 205
+#define FONT_64A 230
+
+#define FONT_12B 206
+#define FONT_16B 207
+#define FONT_20B 208
+#define FONT_24B 209
+#define FONT_28B 210
+#define FONT_32B 211
+#define FONT_64B 231
+
+#define FONT_12C 212
+#define FONT_16C 213
+#define FONT_20C 214
+#define FONT_24C 215
+#define FONT_28C 216
+#define FONT_32C 217
+#define FONT_64C 232
+
+#define FONT_12D 218
+#define FONT_16D 219
+#define FONT_20D 220
+#define FONT_24D 221
+#define FONT_28D 222
+#define FONT_32D 223
+#define FONT_64D 233
 
 int szFont = 17;
 
@@ -92,4 +116,9 @@ void fileNewOption(HWND hWnd)
 void changeFont(HWND hWnd, HFONT font)
 {
 	SendMessage(hWnd, WM_SETFONT, (WPARAM)font, 0);
+}
+void exFont(int szFont, LPCSTR font)
+{
+	szFont = 16; // default
+	CreateFont(szFont, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, font);
 }

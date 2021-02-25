@@ -129,7 +129,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HMENU format = CreateMenu();
 		HMENU editSubMenu = CreatePopupMenu();
 		HMENU fontSize = CreatePopupMenu();
-		
+		HMENU subArial = CreatePopupMenu();
+		HMENU subCS = CreatePopupMenu();
+		HMENU subTNR = CreatePopupMenu();
+		HMENU subConsolas = CreatePopupMenu();
+
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)file, fname);
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)edit, ename);
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)format, "Format");
@@ -154,19 +158,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// format
 		AppendMenu(format, MF_STRING, FORMAT_WW, helpWW);
 		AppendMenu(format, MF_STRING | MF_POPUP, (UINT_PTR)editSubMenu, subFont);
-		AppendMenu(editSubMenu, MF_STRING, FONT_ARIAL, "Arial");
-		AppendMenu(editSubMenu, MF_STRING, FONT_CSMS, "Comic Sans MS");
-		AppendMenu(editSubMenu, MF_STRING, FONT_TNR, "Times New Roman");
-		AppendMenu(editSubMenu, MF_STRING, FONT_CONSOLAS, "Consolas");
+		AppendMenu(editSubMenu, MF_POPUP |  MF_STRING, (UINT_PTR)subArial, "Arial");
+		AppendMenu(subArial, MF_STRING, FONT_12A, "12");
+		AppendMenu(subArial, MF_STRING, FONT_16A, "16");
+		AppendMenu(subArial, MF_STRING, FONT_20A, "20");
+		AppendMenu(subArial, MF_STRING, FONT_24A, "24");
+		AppendMenu(subArial, MF_STRING, FONT_28A, "28");
+		AppendMenu(subArial, MF_STRING, FONT_32A, "32");
+		AppendMenu(subArial, MF_STRING, FONT_64A, "64");
+		AppendMenu(editSubMenu, MF_POPUP | MF_STRING, (UINT_PTR)subCS, "Comic Sans MS");
+		AppendMenu(subCS, MF_STRING, FONT_12B, "12");
+		AppendMenu(subCS, MF_STRING, FONT_16B, "16");
+		AppendMenu(subCS, MF_STRING, FONT_20B, "20");
+		AppendMenu(subCS, MF_STRING, FONT_24B, "24");
+		AppendMenu(subCS, MF_STRING, FONT_28B, "28");
+		AppendMenu(subCS, MF_STRING, FONT_32B, "32");
+		AppendMenu(subCS, MF_STRING, FONT_64B, "64");
+		AppendMenu(editSubMenu, MF_POPUP | MF_STRING, (UINT_PTR)subTNR, "Times New Roman");
+		AppendMenu(subTNR, MF_STRING, FONT_12C, "12");
+		AppendMenu(subTNR, MF_STRING, FONT_16C, "16");
+		AppendMenu(subTNR, MF_STRING, FONT_20C, "20");
+		AppendMenu(subTNR, MF_STRING, FONT_24C, "24");
+		AppendMenu(subTNR, MF_STRING, FONT_28C, "28");
+		AppendMenu(subTNR, MF_STRING, FONT_32C, "32");
+		AppendMenu(subTNR, MF_STRING, FONT_64C, "64");
+		AppendMenu(editSubMenu, MF_POPUP | MF_STRING, (UINT_PTR)subConsolas, "Consolas");
+		AppendMenu(subConsolas, MF_STRING, FONT_12D, "12");
+		AppendMenu(subConsolas, MF_STRING, FONT_16D, "16");
+		AppendMenu(subConsolas, MF_STRING, FONT_20D, "20");
+		AppendMenu(subConsolas, MF_STRING, FONT_24D, "24");
+		AppendMenu(subConsolas, MF_STRING, FONT_28D, "28");
+		AppendMenu(subConsolas, MF_STRING, FONT_32D, "32");
+		AppendMenu(subConsolas, MF_STRING, FONT_64D, "64");
 		SEPARATOR(editSubMenu);
 		AppendMenu(editSubMenu, MF_POPUP | MF_STRING, (UINT_PTR)fontSize, "Font Size");
-		AppendMenu(fontSize, MF_STRING, FONT_12, "12");
-		AppendMenu(fontSize, MF_STRING, FONT_16, "16");
-		AppendMenu(fontSize, MF_STRING, FONT_20, "20");
-		AppendMenu(fontSize, MF_STRING, FONT_24, "24");
-		AppendMenu(fontSize, MF_STRING, FONT_28, "28");
-		AppendMenu(fontSize, MF_STRING, FONT_32, "32");
-		AppendMenu(fontSize, MF_STRING, FONT_64, "64");
+		AppendMenu(fontSize, MF_STRING, NULL, "12");
+		AppendMenu(fontSize, MF_STRING, NULL, "16");
+		AppendMenu(fontSize, MF_STRING, NULL, "20");
+		AppendMenu(fontSize, MF_STRING, NULL, "24");
+		AppendMenu(fontSize, MF_STRING, NULL, "28");
+		AppendMenu(fontSize, MF_STRING, NULL, "32");
+		AppendMenu(fontSize, MF_STRING, NULL, "64");
 		// help
 		AppendMenu(help, MF_STRING, HELP_DOC, "Documentation");
 		AppendMenu(help, MF_STRING, HELP_GITHUB, "GitHub Repository");
@@ -186,13 +218,62 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case FONT_TNR: changeFont(hEdit, TNR); break;
 		case FONT_CONSOLAS: changeFont(hEdit, Consolas); break;
 		// not working font size
-		case FONT_12: szFont = 12; break;
-		case FONT_16: szFont = 16; break;
-		case FONT_20: szFont = 20; break;
-		case FONT_24: szFont = 24; break;
-		case FONT_28: szFont = 28; break;
-		case FONT_32: szFont = 32; break;
-		case FONT_64: szFont = 64; break;
+		case FONT_12A: 
+		{ HFONT a12 = CreateFont(12, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial"); SendMessage(hEdit, WM_SETFONT, (WPARAM)a12, 0); break; }
+		case FONT_16A:
+		{ HFONT a16 = CreateFont(16, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial"); SendMessage(hEdit, WM_SETFONT, (WPARAM)a16, 0); break; }
+		case FONT_20A:
+		{ HFONT a20 = CreateFont(20, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial"); SendMessage(hEdit, WM_SETFONT, (WPARAM)a20, 0); break; }
+		case FONT_24A:
+		{ HFONT a24 = CreateFont(24, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial"); SendMessage(hEdit, WM_SETFONT, (WPARAM)a24, 0); break; }
+		case FONT_28A:
+		{ HFONT a28 = CreateFont(28, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial"); SendMessage(hEdit, WM_SETFONT, (WPARAM)a28, 0); break; }
+		case FONT_32A:
+		{ HFONT a32 = CreateFont(32, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial"); SendMessage(hEdit, WM_SETFONT, (WPARAM)a32, 0); break; }
+		case FONT_64A:
+		{ HFONT a64 = CreateFont(64, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial"); SendMessage(hEdit, WM_SETFONT, (WPARAM)a64, 0); break; }
+		case FONT_12B:
+		{ HFONT b12 = CreateFont(12, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS"); SendMessage(hEdit, WM_SETFONT, (WPARAM)b12, 0); break; }
+		case FONT_16B:
+		{ HFONT b16 = CreateFont(16, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS"); SendMessage(hEdit, WM_SETFONT, (WPARAM)b16, 0); break; }
+		case FONT_20B:
+		{ HFONT b20 = CreateFont(20, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS"); SendMessage(hEdit, WM_SETFONT, (WPARAM)b20, 0); break; }
+		case FONT_24B:
+		{ HFONT b24 = CreateFont(24, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS"); SendMessage(hEdit, WM_SETFONT, (WPARAM)b24, 0); break; }
+		case FONT_28B:
+		{ HFONT b28 = CreateFont(28, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS"); SendMessage(hEdit, WM_SETFONT, (WPARAM)b28, 0); break; }
+		case FONT_32B:
+		{ HFONT b32 = CreateFont(32, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS"); SendMessage(hEdit, WM_SETFONT, (WPARAM)b32, 0); break; }
+		case FONT_64B:
+		{ HFONT b64 = CreateFont(64, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS"); SendMessage(hEdit, WM_SETFONT, (WPARAM)b64, 0); break; }
+		case FONT_12C:
+		{ HFONT c12 = CreateFont(12, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Times New Roman"); SendMessage(hEdit, WM_SETFONT, (WPARAM)c12, 0); break; }
+		case FONT_16C:
+		{ HFONT c16 = CreateFont(16, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Times New Roman"); SendMessage(hEdit, WM_SETFONT, (WPARAM)c16, 0); break; }
+		case FONT_20C:
+		{ HFONT c20 = CreateFont(20, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Times New Roman"); SendMessage(hEdit, WM_SETFONT, (WPARAM)c20, 0); break; }
+		case FONT_24C:
+		{ HFONT c24 = CreateFont(24, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Times New Roman"); SendMessage(hEdit, WM_SETFONT, (WPARAM)c24, 0); break; }
+		case FONT_28C:
+		{ HFONT c28 = CreateFont(28, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Times New Roman"); SendMessage(hEdit, WM_SETFONT, (WPARAM)c28, 0); break; }
+		case FONT_32C:
+		{ HFONT c32 = CreateFont(32, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Times New Roman"); SendMessage(hEdit, WM_SETFONT, (WPARAM)c32, 0); break; }
+		case FONT_64C:
+		{ HFONT c64 = CreateFont(64, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Times New Roman"); SendMessage(hEdit, WM_SETFONT, (WPARAM)c64, 0); break; }
+		case FONT_12D:
+		{ HFONT d12 = CreateFont(12, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d12, 0); break; }
+		case FONT_16D:
+		{ HFONT d16 = CreateFont(16, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d16, 0); break; }
+		case FONT_20D:
+		{ HFONT d20 = CreateFont(20, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d20, 0); break; }
+		case FONT_24D:
+		{ HFONT d24 = CreateFont(24, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d24, 0); break; }
+		case FONT_28D:
+		{ HFONT d28 = CreateFont(28, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d28, 0); break; }
+		case FONT_32D:
+		{ HFONT d32 = CreateFont(32, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d32, 0); break; }
+		case FONT_64D:
+		{ HFONT d64 = CreateFont(64, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d64, 0); break; }
 		case HELP_GITHUB:
 			// TODO: HyperLink
 		case EDIT_COPY:
