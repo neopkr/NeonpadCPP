@@ -13,6 +13,7 @@ Feel free to use this and make any feedback what you want!
 
 ## Last Update (25 February)
 I added Fonts, is too poor the code and very basic but is all i can do for now. I wanna follow this system for a while so i gonna implement almost all fonts that includes Microsoft. The "Font Size" Option dosn't work yet I don't know how i can that works with [that code](https://github.com/neopkr/NeonpadCPP/blob/8b340961251d40b212546444d10ecedc71afe324/WinMain.cpp#L189).
+/// Update: I finally got a Font Size but is the worst form posible, i will try to reoptimize the code later for the other fonts. ///
 
 ## Future View of the Proyect
 I trying to make an very easy interface for everyone. At the same time the notepad has be an IDE in totally by a option in Edit or maybe i can make an IDE, but that is so hard for me yet. This IDE can be count with:
