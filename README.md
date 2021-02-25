@@ -4,6 +4,8 @@ This is my "easy" proyect. I purpose this in February but is still hard for me y
 
 Feel free to use this and make any feedback what you want!
 
+>Note: Only __WIN32_ Supported
+
 ## Features
  - Change Font (New)
  - Text Area
