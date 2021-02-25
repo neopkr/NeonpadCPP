@@ -1,7 +1,24 @@
-﻿  WinMain.cpp
+﻿  WindowsUtils.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\xutility(4393,18): warning C4244: '=': conversión de 'const wchar_t' a 'char'; posible pérdida de datos
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\xutility(4429): message : Vea la referencia a la creación de una instancia de la función plantilla "_OutIt *std::_Copy_unchecked<const wchar_t*,char*>(_InIt,_InIt,_OutIt)" que se está compilando
+          with
+          [
+              _OutIt=char *,
+              _InIt=const wchar_t *
+          ]
+C:\Users\neopk\source\repos\NeonpadCpp\WindowsUtils.cpp(34): message : Vea la referencia a la creación de una instancia de la función plantilla "_OutIt std::copy<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,std::_String_iterator<std::_String_val<std::_Simple_types<char>>>>(_InIt,_InIt,_OutIt)" que se está compilando
+          with
+          [
+              _OutIt=std::_String_iterator<std::_String_val<std::_Simple_types<char>>>,
+              _Elem=wchar_t,
+              _InIt=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>
+          ]
+  WinMain.cpp
+  The contents of <filesystem> are available only with C++17 or later.
   Generando código
-  2 of 8 functions (25.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
+  22 of 26 functions (84.6%) were compiled, the rest were copied from previous compilation.
+    20 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Generación de código finalizada
   NeonpadCpp.vcxproj -> C:\Users\neopk\source\repos\NeonpadCpp\Release\NeonpadCpp.exe

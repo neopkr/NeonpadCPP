@@ -6,6 +6,14 @@
 #include <stdio.h>
 #include <Commctrl.h>
 #include <errno.h>
+#include <sstream>
+#include <sddl.h>
+#include <winevt.h>
+#include <fstream>
+#include <direct.h>
+#include "WindowsUtils.h"
+#include <chrono>
+//#include "stdafx.h"
 
 #define ID_TEXT 0
 #define ID_FONT_SIZE 16
@@ -16,6 +24,9 @@
 #define FILE_MENU_SAVE 4
 #define FILE_MENU_NEW 5
 #define FILE_MENU_OPEN 6
+#define VIEW_ZOOM_IN 411
+#define VIEW_ZOOM_OUT 412
+#define VIEW_ZOOM_DEFAULT 413
 #define EDIT_DELETE 7
 #define EDIT_COPY 8
 #define EDIT_PASTE 9
@@ -121,4 +132,13 @@ void exFont(int szFont, LPCSTR font)
 {
 	szFont = 16; // default
 	CreateFont(szFont, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, font);
+}
+void OpenWebsite(std::string url)
+{
+	ShellExecute(0, 0, (LPCSTR)WindowsUtils::StringToWString(url).c_str(),0,0,SW_SHOW);
+}
+
+void WOpenWebsite(LPCSTR url)
+{
+	ShellExecute(NULL, "Open", url, NULL, NULL, SW_SHOWNORMAL);
 }

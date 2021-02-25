@@ -21,6 +21,7 @@ void textBox(HWND);
 int g_scrollY = 0;
 HWND hEdit;
 HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+HFONT hDefault;
 HWND hFontSize;
 
 int CALLBACK WinMain(
@@ -90,7 +91,10 @@ int CALLBACK WinMain(
 		return 1;
 	}
 
-
+	// default font
+	hDefault = CreateFont(17, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial");
+	SendMessage(hEdit, WM_SETFONT, (WPARAM)hDefault, 0);
+	SendMessage(hWnd, WM_SETFONT, (WPARAM)hDefault, 0);
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 	
@@ -133,6 +137,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HMENU subCS = CreatePopupMenu();
 		HMENU subTNR = CreatePopupMenu();
 		HMENU subConsolas = CreatePopupMenu();
+		HMENU viewSubMenu = CreatePopupMenu();
+		HMENU barState = CreatePopupMenu();
 
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)file, fname);
 		AppendMenu(menubar, MF_POPUP, (UINT_PTR)edit, ename);
@@ -147,7 +153,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SEPARATOR(file);
 		AppendMenu(file, MF_STRING, FILE_MENU_EXIT, fileExit);
 		// view
-		AppendMenu(view, MF_STRING, NULL, nodata);
+		AppendMenu(view, MF_POPUP| MF_STRING, (UINT_PTR)viewSubMenu, "Zoom");
+		AppendMenu(viewSubMenu, MF_STRING, VIEW_ZOOM_IN, "In			NULL");
+		AppendMenu(viewSubMenu, MF_STRING, VIEW_ZOOM_OUT, "Out			NULL");
+		AppendMenu(viewSubMenu, MF_STRING, VIEW_ZOOM_DEFAULT, "Default Zoom			NULL");
+		AppendMenu(view, MF_STRING, NULL, "Bar State");
 		// edit
 		AppendMenu(edit, MF_STRING, NULL, "Undo			Ctrl+Z");
 		SEPARATOR(edit);
@@ -191,7 +201,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		AppendMenu(subConsolas, MF_STRING, FONT_32D, "32");
 		AppendMenu(subConsolas, MF_STRING, FONT_64D, "64");
 		SEPARATOR(editSubMenu);
-		AppendMenu(editSubMenu, MF_POPUP | MF_STRING, (UINT_PTR)fontSize, "Font Size");
+		AppendMenu(editSubMenu, MF_POPUP | MF_STRING, (UINT_PTR)fontSize, "NULL");
 		AppendMenu(fontSize, MF_STRING, NULL, "12");
 		AppendMenu(fontSize, MF_STRING, NULL, "16");
 		AppendMenu(fontSize, MF_STRING, NULL, "20");
@@ -275,7 +285,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case FONT_64D:
 		{ HFONT d64 = CreateFont(64, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d64, 0); break; }
 		case HELP_GITHUB:
-			// TODO: HyperLink
+			//OpenWebsite("https://github.com/neopkr/NeonpadCPP");
+			WOpenWebsite("https://github.com/neopkr/NeonpadCPP");
+			break;
 		case EDIT_COPY:
 		{
 			SetClipboardData(CF_TEXT, hWnd);
@@ -304,8 +316,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case ID_TEXT:
 		{
-
-			fileNewOption(hWnd);
+			SetWindowText(hEdit, "");
 			break;
 		}
 		case FILE_MENU_OPEN:
