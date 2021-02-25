@@ -43,7 +43,7 @@
 int szFont = 17;
 
 HFONT arial = CreateFont(szFont, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial");
-HFONT csMS = CreateFont(szFont, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS");
+HFONT csMS = CreateFont(22, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Comic Sans MS"); // Comic Sans has a predefined Size for now
 HFONT TNR = CreateFont(szFont, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Times New Roman");
 HFONT Consolas = CreateFont(szFont, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas");
 
