@@ -19,10 +19,24 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 void textBox(HWND);
 int g_scrollY = 0;
+HWND hWndStatusBar;
 HWND hEdit;
+HWND hFontMenu;
 HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 HFONT hDefault;
 HWND hFontSize;
+HWND hAbout;
+
+int	   iWidth = 1000;
+int	   iHeight = 600;
+
+void frame_real(int w, int h, int& rw, int& rh)
+{
+	RECT frame = { 0,0,w,h };
+	AdjustWindowRect(&frame, WS_OVERLAPPED, FALSE);
+	rw = frame.right - frame.left;
+	rh = frame.bottom - frame.top;
+}
 
 int CALLBACK WinMain(
 	_In_	 HINSTANCE hInstance,
@@ -55,32 +69,30 @@ int CALLBACK WinMain(
 		return 1;
 	}
 	int sbHeight = 800;
-	
+	int w, h;
+	frame_real(iWidth, iHeight, w, h);
 	hInst = hInstance;
 	HWND hWnd = CreateWindow(
 		szWindowClass,
 		szTitle,
 		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX,
 		CW_USEDEFAULT, CW_USEDEFAULT,
-		1000, 600,
-		NULL,
+		w, h,
+		HWND_DESKTOP,
 		NULL,
 		hInstance,
 		NULL
 	);
 
-	HWND dhWnd = CreateWindow(
-		"",
-		"",
-		WS_TABSTOP | WS_BORDER | WS_VISIBLE | WS_CHILD,
-		500,500,
-		10,10,
-		hWnd,
-		NULL,
-		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-		NULL
-	);
 
+
+	/*
+	if (!hFontMenu)
+	{
+		MessageBox(NULL, "UNABLE TO CALL HFONTMENU", "NeonpadCPP", NULL);
+		return 1;
+	}
+	*/
 	if(!hWnd)
 	{
 		MessageBox(NULL,
@@ -95,10 +107,9 @@ int CALLBACK WinMain(
 	hDefault = CreateFont(17, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial");
 	SendMessage(hEdit, WM_SETFONT, (WPARAM)hDefault, 0);
 	SendMessage(hWnd, WM_SETFONT, (WPARAM)hDefault, 0);
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
-	
-
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -201,7 +212,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		AppendMenu(subConsolas, MF_STRING, FONT_32D, "32");
 		AppendMenu(subConsolas, MF_STRING, FONT_64D, "64");
 		SEPARATOR(editSubMenu);
-		AppendMenu(editSubMenu, MF_POPUP | MF_STRING, (UINT_PTR)fontSize, "NULL");
+		AppendMenu(editSubMenu, MF_STRING, FONT_SIZE, "NULL");
+		/*
 		AppendMenu(fontSize, MF_STRING, NULL, "12");
 		AppendMenu(fontSize, MF_STRING, NULL, "16");
 		AppendMenu(fontSize, MF_STRING, NULL, "20");
@@ -209,6 +221,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		AppendMenu(fontSize, MF_STRING, NULL, "28");
 		AppendMenu(fontSize, MF_STRING, NULL, "32");
 		AppendMenu(fontSize, MF_STRING, NULL, "64");
+		*/
 		// help
 		AppendMenu(help, MF_STRING, HELP_DOC, "Documentation");
 		AppendMenu(help, MF_STRING, HELP_GITHUB, "GitHub Repository");
@@ -217,12 +230,55 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetMenu(hWnd, menubar);
 		
 		// TextBox
-		hEdit = CreateWindow(ename, "", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_EX_LAYERED | WS_VSCROLL | WS_HSCROLL, 0, 1, 985, 540, hWnd, (HMENU)ID_TEXT, NULL, hFont);
+		hEdit = CreateWindow(ename, "", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_EX_LAYERED | WS_VSCROLL | WS_HSCROLL, 0, 1, iWidth - 15, iHeight - 60, hWnd, (HMENU)ID_TEXT, NULL, hFont);
+		//hFontMenu = CreateWindow(ename, "", WS_VISIBLE | WS_CHILD | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX, 500, 500, 200, 200, hWnd, (HMENU)ID_FONT, NULL, hFont);
+		
+		hWndStatusBar = CreateWindowEx(
+			0,
+			STATUSCLASSNAME,
+			NULL,
+			WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
+			0,
+			0,
+			0,
+			0,
+			hWnd,
+			(HMENU)IDC_STATUSBAR,
+			(HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE),
+			NULL
+		);
+		
+		if (!hWndStatusBar)
+		{
+			MessageBox(NULL, "Failed to create the status bar", "Error", MB_OK | MB_ICONERROR);
+			return 0;
+		}
+		bool on = false;
+		int iStatusWidths[] = { 100, 200, -1 };
+		char text[256];
+		int number = GetWindowTextLength(hEdit);
+		SendMessage(hWndStatusBar, SB_SETPARTS, 3, (LPARAM)iStatusWidths);
+		SendMessage(hWndStatusBar, SB_SETTEXT, 0, (LPARAM)"Status Bar");
+		SendMessage(hWndStatusBar, SB_SETTEXT, 1, (LPARAM)"Cells");
+		sprintf(text, "%d", 0);
+		SendMessage(hWndStatusBar, SB_GETTEXT, 2, (LPARAM)text);
+		ShowWindow(hWndStatusBar, SW_SHOW);
+
 		break;
-	}	
+	}
+	case WM_SIZE:
+		SendMessage(hWndStatusBar, WM_SIZE, 0, 0);
+		break;
+	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		break;
 	case WM_COMMAND:
 		switch (wParam)
 		{
+		case FONT_SIZE:
+		{
+
+		}
 		case FONT_ARIAL: changeFont(hEdit, arial); break;
 		case FONT_CSMS: changeFont(hEdit, csMS); break;
 		case FONT_TNR: changeFont(hEdit, TNR); break;
@@ -285,12 +341,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case FONT_64D:
 		{ HFONT d64 = CreateFont(64, 0, 0, 0, FW_NORMAL, false, false, false, ANSI_CHARSET, 0, 0, DEFAULT_QUALITY, DEFAULT_PITCH, "Consolas"); SendMessage(hEdit, WM_SETFONT, (WPARAM)d64, 0); break; }
 		case HELP_GITHUB:
-			//OpenWebsite("https://github.com/neopkr/NeonpadCPP");
+			DebugLog("HELP_GITHUB CALLED");
 			WOpenWebsite("https://github.com/neopkr/NeonpadCPP");
+			break;
+		case HELP_DOC:
+			WOpenWebsite("https://github.com/neopkr/NeonpadCPP#neonpadcpp");
+			break;
+			break;
+		case HELP_ABOUT:
+			hAbout = CreateWindowEx(0, STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 100, 200, NULL, NULL, NULL, NULL);
+			ShowWindow(hAbout, SW_SHOW);
 			break;
 		case EDIT_COPY:
 		{
-			SetClipboardData(CF_TEXT, hWnd);
+			SetClipboardData(CF_TEXT, hEdit);
 		
 			IsClipboardFormatAvailable(CF_TEXT); // success
 			IsClipboardFormatAvailable(CF_UNICODETEXT); // success
@@ -336,7 +400,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ofn.lpstrFile = file_name;
 			ofn.lpstrFile[0] = '\0';
 			ofn.nMaxFile = 1000;
-			ofn.lpstrFilter = "All files\0*.*\0Source Files\0*.CPP\0Text Files\0*.TXT\0";
+			ofn.lpstrFilter = "NPDX\0*.npdx*\0Source Files\0*.CPP\0Text Files\0*.TXT\0";
 			ofn.nFilterIndex = 1;
 
 			GetOpenFileName(&ofn);
@@ -384,16 +448,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ofn.lpstrFile = file_name;
 			ofn.lpstrFile[0] = '\0';
 			ofn.nMaxFile = 1000;
-			ofn.lpstrFilter = "All files\0*.*\0Source Files\0*.CPP\0Text Files\0*.TXT\0";
+			ofn.lpstrFilter = "NPDX\0*.npdx*\0Source Files\0*.CPP\0Text Files\0*.TXT\0";
 			ofn.nFilterIndex = 1;
 
-			GetSaveFileName(&ofn);
+			int tex1 = GetWindowTextLength(hEdit);
+
 
 			char* path = ofn.lpstrFile;
 
 			FILE* file;
 			errno_t err;
 
+			if (tex1 == 0)
+			{
+				MessageBox(NULL, "No se puede guardar un texto vacio!", "Neonpad", NULL);
+				break;
+			}
+			else
+			{
+				
+			GetSaveFileName(&ofn);
 			if ((err = fopen_s(&file, path, "w")) != NULL)
 			{
 				fprintf(stderr, "cannot open file '%s' : %s\n",
@@ -409,6 +483,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			}
 			break;
+			}
 		}
 		case FILE_MENU_NEW:
 		{
@@ -431,16 +506,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ofn.lpstrFile = file_name;
 			ofn.lpstrFile[0] = '\0';
 			ofn.nMaxFile = 1000;
-			ofn.lpstrFilter = "All files\0*.*\0Source Files\0*.CPP\0Text Files\0*.TXT\0";
+			ofn.lpstrFilter = "NPDX\0*.npdx*\0Source Files\0*.CPP\0Text Files\0*.TXT\0";
 			ofn.nFilterIndex = 1;
-
-			GetSaveFileName(&ofn);
 
 			char* path = ofn.lpstrFile;
 
 			FILE* file;
 			errno_t err;
 
+			int tex = GetWindowTextLength(hEdit);
+
+			if (tex == 0)
+			{
+				MessageBox(NULL, "No se puede guardar un archivo vacio!", "Neonpad", NULL);
+				break;
+			}
+			else
+			{
+				GetSaveFileName(&ofn);
 			if ((err = fopen_s(&file, path, "w")) != NULL)
 			{
 				fprintf(stderr, "cannot open file '%s' : %s\n",
@@ -456,6 +539,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			}
 			break;
+			}
 		}
 	/*
 	case WM_VSCROLL:

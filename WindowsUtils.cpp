@@ -21,6 +21,7 @@ WindowsUtils::~WindowsUtils()
 }
 
 
+
 std::wstring WindowsUtils::StringToWString(const std::string& s)
 {
 	std::wstring temp(s.length(), L' ');

@@ -13,7 +13,6 @@
 #include <direct.h>
 #include "WindowsUtils.h"
 #include <chrono>
-//#include "stdafx.h"
 
 #define ID_TEXT 0
 #define ID_FONT_SIZE 16
@@ -36,8 +35,10 @@
 #define HELP_GITHUB 15
 #define MAX 1000
 #define iO 0x4F
-
+#define IDC_STATUSBAR 9222
 // FONT SIZE - FONT CREATOR
+#define FONT_SIZE 18
+#define ID_FONT 19
 #define FONT_ARIAL 100
 #define FONT_CSMS 101
 #define FONT_TNR 102
@@ -141,4 +142,8 @@ void OpenWebsite(std::string url)
 void WOpenWebsite(LPCSTR url)
 {
 	ShellExecute(NULL, "Open", url, NULL, NULL, SW_SHOWNORMAL);
+}
+void DebugLog(std::string call)
+{
+	std::cout << call << std::endl;
 }
